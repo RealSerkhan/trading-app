@@ -1,0 +1,36 @@
+{
+  "@@locale": "en",
+    "login":"Log in",
+    "logout":"Log out",
+    "cancel":"Cancel",
+    "save_changes":"Save changes",
+    "please_enter_credentials":"Please enter your credientials to access your account",
+    "home":"Home",
+    "update_required":"Update required",
+    "you_have_to_update_in_order_to_use_our_service":"To continue using our app, please update to the latest version. This will ensure you have the best experience and access to new features.",
+    "update":"Update",
+    "retry":"Retry",
+    "something_went_wrong": "Something went wrong",
+    "no_internet":"No internet connection",
+    "success":"Sucess",
+    "select":"Select",
+    "select_video":"Select video",
+    "camera":"Camera",
+    "error":"Error",
+    "video_too_long":"Video length is too long",
+    "take_picture":"Take picture",
+    "required":"Required",
+    "select_document":"Select document",
+    "choose_your_picture":"Choose your picture"
+
+
+
+
+
+
+
+
+
+
+
+}
