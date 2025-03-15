@@ -1,4 +1,4 @@
-package com.example.beneficiary
+package com.exinity.trading_app
 
 import io.flutter.embedding.android.FlutterActivity
 

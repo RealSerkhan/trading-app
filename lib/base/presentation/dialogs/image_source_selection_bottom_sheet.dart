@@ -1,7 +1,6 @@
 import 'package:beneficiary/base/presentation/widgets/texts/body2.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:beneficiary/base/data/app_texts.dart';
 import 'package:beneficiary/base/presentation/constants/app_paddings.dart';
 import 'package:beneficiary/base/presentation/utils/ext/build_context_ext.dart';
 import 'package:beneficiary/base/presentation/widgets/spaces/big_height.dart';
@@ -21,8 +20,7 @@ class PhotoBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
         decoration: BoxDecoration(
-          borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+          borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
           color: context.colors.background,
         ),
         child: Padding(
@@ -42,8 +40,7 @@ class PhotoBottomSheet extends StatelessWidget {
                           height: 3,
                           width: 40,
                           decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(1000),
-                              color: context.colors.borderColor),
+                              borderRadius: BorderRadius.circular(1000), color: context.colors.borderColor),
                         ),
                       ),
                       ZoomTapAnimation(
@@ -63,7 +60,7 @@ class PhotoBottomSheet extends StatelessWidget {
                                   width: 4,
                                 ),
                                 Body2(
-                                  text: takePhoto,
+                                  text: "take photo",
                                   color: context.colors.textBlackKnight,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -96,7 +93,7 @@ class PhotoBottomSheet extends StatelessWidget {
                                   width: 4,
                                 ),
                                 Body2(
-                                  text: selectGallery,
+                                  text: 'Select from gallery',
                                   color: context.colors.textBlackKnight,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,

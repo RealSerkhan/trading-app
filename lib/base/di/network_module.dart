@@ -1,6 +1,7 @@
 import 'package:dart_kit/dart_kit.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http_sdk/http_sdk.dart';
 import 'package:injectable/injectable.dart';
 import 'package:beneficiary/base/data/sources/auth_local_datasource.dart';
@@ -11,13 +12,10 @@ import 'package:beneficiary/base/networking/http_client.dart';
 @module
 abstract class NetworkModule {
   @Named('ApiBaseUrl')
-  String get apiBaseUrl => 'https://test.timefor.rent/api';
+  String get apiBaseUrl => 'https://finnhub.io/api/v1';
 
-  @Named('DatabaseUrl')
-  String get databaseUrl => 'flavorSettings.databaseUrl';
-
-  @Named('FirestoreDatabaseUrl')
-  String get firestoreDatabaseUrl => 'flavorSettings.databaseUrl';
+  @Named('WebsocketUrl')
+  String get websocketUrl => 'wss://ws.finnhub.io?token=${dotenv.env['FINNHUB_API_KEY']}';
 
   @injectable
   BaseOptions dioOptions(@Named('ApiBaseUrl') String baseUrl) => BaseOptions(
@@ -59,6 +57,8 @@ abstract class NetworkModule {
 
   @singleton
   HttpClient httpClient(Dio dio) => DioHttpClient(dio);
+
+  
 
   @singleton
   HttpSdk httpSdk(Dio dio) => HttpSdk(dio: dio, interceptors: []);

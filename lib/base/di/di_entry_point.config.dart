@@ -20,24 +20,16 @@ import 'package:injectable/injectable.dart' as _i526;
 import 'package:logger/logger.dart' as _i974;
 
 import '../../app/app_router.dart' as _i510;
-import '../../features/beneficiary/data/repos/beneficiary_repo_impl.dart'
-    as _i670;
-import '../../features/beneficiary/data/sources/beneficiary_remote_source.dart'
-    as _i80;
-import '../../features/beneficiary/domain/repos/beneficiary_repo.dart'
-    as _i1032;
-import '../../features/beneficiary/domain/use_cases/add_beneficiary_use_case.dart'
-    as _i526;
-import '../../features/beneficiary/domain/use_cases/get_all_beneficiary_use_case.dart'
-    as _i295;
-import '../../features/beneficiary/domain/use_cases/get_transactions_use_case.dart'
-    as _i688;
-import '../../features/beneficiary/domain/use_cases/top_up_beneficiary_use_case.dart'
-    as _i36;
-import '../../features/beneficiary/presentation/bloc/add_beneficiary/add_beneficiary_cubit.dart'
-    as _i589;
-import '../../features/beneficiary/presentation/bloc/top_up_beneficiary/top_up_beneficiary_cubit.dart'
-    as _i1005;
+import '../../features/trading/data/repos/trading_repo_impl.dart' as _i328;
+import '../../features/trading/data/sources/trading_remote_source.dart'
+    as _i848;
+import '../../features/trading/data/sources/websocket_source.dart' as _i641;
+import '../../features/trading/domain/repos/trading_repo.dart' as _i59;
+import '../../features/trading/domain/use_cases/get_symbols_use_case.dart'
+    as _i48;
+import '../../features/trading/domain/use_cases/listen_price_updates_use_case.dart'
+    as _i256;
+import '../../features/trading/presentation/bloc/trading_bloc.dart' as _i790;
 import '../../features/user/data/repos/user_repo_impl.dart' as _i394;
 import '../../features/user/data/sources/user_local_source.dart' as _i392;
 import '../../features/user/data/sources/user_remote_source.dart' as _i1013;
@@ -91,22 +83,20 @@ Future<_i174.GetIt> $initDependencyInjection(
   );
   gh.lazySingleton<_i974.Logger>(() => appModule.logger);
   gh.lazySingleton<_i264.Locale>(() => appModule.locale);
+  gh.factory<String>(
+    () => networkModule.websocketUrl,
+    instanceName: 'WebsocketUrl',
+  );
   gh.singleton<_i696.AppDiskCache>(
       () => appModule.appDiskCache(gh<_i979.Box<dynamic>>()));
-  gh.factory<String>(
-    () => networkModule.databaseUrl,
-    instanceName: 'DatabaseUrl',
-  );
-  gh.factory<String>(
-    () => networkModule.firestoreDatabaseUrl,
-    instanceName: 'FirestoreDatabaseUrl',
-  );
   gh.factory<String>(
     () => networkModule.apiBaseUrl,
     instanceName: 'ApiBaseUrl',
   );
   gh.singleton<_i392.UserLocalSource>(
       () => _i392.UserLocalSourceImpl(gh<_i979.Box<dynamic>>()));
+  gh.lazySingleton<_i641.WebSocketService>(
+      () => _i641.WebSocketService(gh<String>(instanceName: 'WebsocketUrl')));
   gh.factory<_i361.BaseOptions>(
       () => networkModule.dioOptions(gh<String>(instanceName: 'ApiBaseUrl')));
   gh.singleton<_i662.AppSettingsLocalSource>(
@@ -126,6 +116,11 @@ Future<_i174.GetIt> $initDependencyInjection(
   gh.singleton<_i757.HttpClient>(
       () => networkModule.httpClient(gh<_i361.Dio>()));
   gh.singleton<_i934.HttpSdk>(() => networkModule.httpSdk(gh<_i361.Dio>()));
+  gh.lazySingleton<_i848.TradingRemoteDataSource>(
+      () => _i848.TradingRemoteDataSourceImpl(
+            gh<_i757.HttpClient>(),
+            gh<_i934.HttpSdk>(),
+          ));
   gh.lazySingleton<_i297.AppRemoteSource>(() => _i297.AppRemoteSourceImpl(
         gh<_i757.HttpClient>(),
         gh<_i934.HttpSdk>(),
@@ -137,21 +132,16 @@ Future<_i174.GetIt> $initDependencyInjection(
         gh<_i662.AppSettingsLocalSource>(),
         gh<_i458.AuthLocalSource>(),
       ));
-  gh.lazySingleton<_i80.BeneficiaryRemoteDataSource>(
-      () => _i80.BeneficiarynRemoteDataSourceImpl(
-            gh<_i757.HttpClient>(),
-            gh<_i934.HttpSdk>(),
-          ));
   gh.lazySingleton<_i1013.UserRemoteDataSource>(
       () => _i1013.UserRemoteDataSourceImpl(
             gh<_i757.HttpClient>(),
             gh<_i934.HttpSdk>(),
           ));
-  gh.lazySingleton<_i1032.BeneficiaryRepository>(
-      () => _i670.BeneficiaryRepoImpl(
-            gh<_i80.BeneficiaryRemoteDataSource>(),
-            gh<_i458.AuthLocalSource>(),
-          ));
+  gh.lazySingleton<_i59.TradingRepository>(() => _i328.TradingRepoImpl(
+        gh<_i848.TradingRemoteDataSource>(),
+        gh<_i641.WebSocketService>(),
+        gh<_i458.AuthLocalSource>(),
+      ));
   gh.factory<_i257.UpdateFirstRunFlagUseCase>(
       () => _i257.UpdateFirstRunFlagUseCase(gh<_i564.AppRepository>()));
   gh.factory<_i257.ObserveFirstRunUseCase>(
@@ -164,14 +154,10 @@ Future<_i174.GetIt> $initDependencyInjection(
         gh<_i1013.UserRemoteDataSource>(),
         gh<_i458.AuthLocalSource>(),
       ));
-  gh.factory<_i295.GetAllBeneficiariesUseCase>(() =>
-      _i295.GetAllBeneficiariesUseCase(gh<_i1032.BeneficiaryRepository>()));
-  gh.factory<_i526.AddBeneficiaryUseCase>(
-      () => _i526.AddBeneficiaryUseCase(gh<_i1032.BeneficiaryRepository>()));
-  gh.factory<_i36.TopUpBeneficiaryUseCase>(
-      () => _i36.TopUpBeneficiaryUseCase(gh<_i1032.BeneficiaryRepository>()));
-  gh.factory<_i688.GetTransactionsUseCase>(
-      () => _i688.GetTransactionsUseCase(gh<_i1032.BeneficiaryRepository>()));
+  gh.factory<_i48.GetSymbolsUseCase>(
+      () => _i48.GetSymbolsUseCase(gh<_i59.TradingRepository>()));
+  gh.factory<_i256.ListenPriceUpdatesUseCase>(
+      () => _i256.ListenPriceUpdatesUseCase(gh<_i59.TradingRepository>()));
   gh.factory<_i1022.GetUserInfoUseCase>(
       () => _i1022.GetUserInfoUseCase(gh<_i669.UserRepository>()));
   gh.factory<_i60.UpdateUserInfoUseCase>(
@@ -183,10 +169,6 @@ Future<_i174.GetIt> $initDependencyInjection(
         gh<_i806.ChangeLanguageUseCase>(),
         gh<_i1024.ObserveLanguageUseCase>(),
       ));
-  gh.factory<_i1005.TopUpBeneficiaryCubit>(() => _i1005.TopUpBeneficiaryCubit(
-        gh<_i688.GetTransactionsUseCase>(),
-        gh<_i36.TopUpBeneficiaryUseCase>(),
-      ));
   gh.factory<_i1048.ChangeThemeModeUseCase>(
       () => _i1048.ChangeThemeModeUseCase(gh<_i564.AppRepository>()));
   gh.factory<_i131.GetDefaultThemeMode>(
@@ -197,12 +179,14 @@ Future<_i174.GetIt> $initDependencyInjection(
         gh<_i257.ObserveFirstRunUseCase>(),
         gh<_i257.UpdateFirstRunFlagUseCase>(),
       ));
+  gh.factory<_i790.TradingBloc>(() => _i790.TradingBloc(
+        getSymbolsUseCase: gh<_i48.GetSymbolsUseCase>(),
+        listenPriceUpdates: gh<_i256.ListenPriceUpdatesUseCase>(),
+      ));
   gh.singleton<_i450.ThemeCubit>(() => _i450.ThemeCubit(
         getDefaultThemeMode: gh<_i131.GetDefaultThemeMode>(),
         changeThemeMode: gh<_i1048.ChangeThemeModeUseCase>(),
       ));
-  gh.factory<_i589.AddBeneficiaryCubit>(
-      () => _i589.AddBeneficiaryCubit(gh<_i526.AddBeneficiaryUseCase>()));
   gh.factory<_i171.UserCubit>(
       () => _i171.UserCubit(gh<_i1022.GetUserInfoUseCase>()));
   return getIt;

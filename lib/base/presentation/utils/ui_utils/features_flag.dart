@@ -26,6 +26,7 @@ abstract class FeaturesFlags {
       features.every((it) => hasFeature(it));
 
   static void init() {
+    //TODO implement this for multi env
     // switch (flavorSettings.flavorType) {
     // case FlavorType.dev:
     // features.addAll(

@@ -13,11 +13,10 @@ class BaseRepositoryImpl implements BaseRepository {
 
   @override
   Future<Either<Failure, T>> request<T>(Function data,
-      {Either<Failure, T>? Function(WrongDataException e)?
-          exceptionHandler}) async {
+      {Function? toDomainHandler, Either<Failure, T>? Function(WrongDataException e)? exceptionHandler}) async {
     try {
       final result = await data.call();
-      return Right(result);
+      return Right(toDomainHandler?.call(result) ?? result);
     } on WrongDataException catch (e) {
       return _handleWrongDataException(e, exceptionHandler: exceptionHandler);
     } on ServerNotWorkingException catch (error) {
@@ -29,31 +28,12 @@ class BaseRepositoryImpl implements BaseRepository {
     } on TimeoutException {
       return const Left(TimeoutFailure());
     } on UnKnownException catch (error) {
-      return Left(
-          UnknownFailure(callId: error.callId, sourceClass: error.sourceClass));
+      return Left(UnknownFailure(callId: error.callId, sourceClass: error.sourceClass));
     } catch (e) {
       log(e.toString());
       return const Left(UnknownFailure());
     }
   }
-
-  // @override
-  // Future<Either<Failure, T>> request<T>(
-  //   Function body, {
-  //   bool checkToken = true,
-  // }) async {
-  //   try {
-  //     final connectivityResult = await _networkInfo.checkConnectivity();
-  //     if (connectivityResult.contains(ConnectivityResult.none)) {
-  //       return const Left(
-  //           ServerFailure(exception: NetworkException.noInternetConnection()));
-  //     }
-
-  //     final result = await body();
-  //     return Right(result);
-  //   } catch (e) {
-  //     return handleErrors<T>(e);
-  //   }
 }
 
 Either<Failure, T> _handleWrongDataException<T>(WrongDataException e,

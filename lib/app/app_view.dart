@@ -1,4 +1,4 @@
-import 'package:beneficiary/features/beneficiary/presentation/bloc/beneficiaries_list/beneficiaries_list_cubit.dart';
+import 'package:beneficiary/features/trading/presentation/bloc/trading_bloc.dart';
 import 'package:beneficiary/features/user/presentation/bloc/user/user_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,13 +28,11 @@ class AppView extends StatelessWidget {
         return MultiBlocProvider(
           providers: [
             BlocProvider(create: (context) => AppSettingsBloc(getIt())),
-            BlocProvider<ThemeCubit>(
-                create: (ctx) => getIt()..initTheme(context)),
-            BlocProvider<LocalizationCubit>(
-                create: (ctx) => getIt()..startObservingLanguage()),
+            BlocProvider<ThemeCubit>(create: (ctx) => getIt()..initTheme(context)),
+            BlocProvider<LocalizationCubit>(create: (ctx) => getIt()..startObservingLanguage()),
             BlocProvider(create: (context) => AppNavigatorCubit()),
-            BlocProvider(create: (context) => BeneficiariesListCubit(getIt())),
             BlocProvider(create: (context) => UserCubit(getIt())),
+            BlocProvider(create: (context) => getIt<TradingBloc>()),
           ],
           child: BlocBuilder<LocalizationCubit, LanguageEnum>(
             builder: (context, lang) {
@@ -62,19 +60,15 @@ class AppView extends StatelessWidget {
                   locale: lang.asLocale,
                   routeInformationParser: Resources.router.defaultRouteParser(),
                   builder: (context, child) => ScrollConfiguration(
-                      behavior: const ScrollBehaviorModified(),
-                      child: child ?? const SizedBox.shrink()),
+                      behavior: const ScrollBehaviorModified(), child: child ?? const SizedBox.shrink()),
                   theme: ThemeData(
                     useMaterial3: false,
                     fontFamily: 'Montserrat',
                     scaffoldBackgroundColor: appColors.background,
                     textTheme: const TextTheme(
-                      displayLarge: TextStyle(
-                          fontSize: 72.0, fontWeight: FontWeight.bold),
-                      titleLarge: TextStyle(
-                          fontSize: 36.0, fontStyle: FontStyle.normal),
-                      bodyMedium:
-                          TextStyle(fontSize: 14.0, fontFamily: 'Inter'),
+                      displayLarge: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
+                      titleLarge: TextStyle(fontSize: 36.0, fontStyle: FontStyle.normal),
+                      bodyMedium: TextStyle(fontSize: 14.0, fontFamily: 'Inter'),
                     ),
                     primarySwatch: Colors.blue,
                   ),

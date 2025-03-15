@@ -3,6 +3,7 @@ import 'package:dart_kit/dart_kit.dart';
 import 'package:dio/dio.dart';
 import 'package:beneficiary/base/data/sources/auth_local_datasource.dart';
 import 'package:beneficiary/base/data/sources/token_type.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// Class to intercept HTTP requests and errors related to authentication.
 class AuthInterceptor extends Interceptor with Loggable {
@@ -24,9 +25,9 @@ class AuthInterceptor extends Interceptor with Loggable {
     switch (tokenType) {
       case TokenType.JWT:
         final accessToken = await _authLocalSource.getUserToken().first;
+
         if (accessToken != null) {
-          options.headers[HttpHeaders.authorizationHeader] =
-              "Bearer $accessToken";
+          options.headers[HttpHeaders.authorizationHeader] = "Bearer $accessToken";
         } else {
           i('Request asking for auth header but local source return null for access token');
         }
@@ -35,6 +36,8 @@ class AuthInterceptor extends Interceptor with Loggable {
       case TokenType.None:
         break;
     }
+    final finnhubKey = dotenv.env['FINNHUB_API_KEY'];
+    options.queryParameters = options.queryParameters..addAll({"token": finnhubKey});
 
     handler.next(options);
   }

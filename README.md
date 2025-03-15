@@ -1,4 +1,4 @@
-# beneficiary
+# trading app
 
 A new Flutter project.
 

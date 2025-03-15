@@ -82,6 +82,8 @@ dependencies:
   get_it: ^7.7.0
   meta: ^1.15.0
   animated_segmented_tab_control: ^2.0.0
+  flutter_dotenv: ^5.2.1
+  web_socket_channel: ^3.0.2
 
 dev_dependencies:
   flutter_test:
@@ -118,6 +120,8 @@ flutter:
     - assets/rasters/
     - assets/l10n/
     - assets/lottie/
+    - .env
+    
 
 
   # To add assets to your application, add an assets section, like this:

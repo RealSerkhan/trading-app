@@ -10,9 +10,7 @@ extension StringExt on String {
     required String? query,
     required TextStyle highlightStyle,
   }) {
-    if (query == null ||
-        query.isEmpty ||
-        !toLowerCase().contains(query.toLowerCase())) {
+    if (query == null || query.isEmpty || !toLowerCase().contains(query.toLowerCase())) {
       return [TextSpan(text: this)];
     }
     final matches = query.toLowerCase().allMatches(toLowerCase());
@@ -51,18 +49,18 @@ extension StringExt on String {
         .hasMatch(this);
   }
 
-  String get toValidPhone =>
-      "+964$this".replaceAll('-', '').replaceFirst('0', '');
+  String get toValidPhone => "+964$this".replaceAll('-', '').replaceFirst('0', '');
 
   String? required(BuildContext context, {int length = 50}) {
     if (isNullOrEmpty) {
       return AppLocalizations.of(context).required;
+    } else if (length < this.length) {
+      return 'Max 20 characters are allowed';
     }
     return null;
   }
 
-  String get toImage =>
-      replaceFirst(RegExp(r'data:image\/[a-zA-Z]+;base64,'), '');
+  String get toImage => replaceFirst(RegExp(r'data:image\/[a-zA-Z]+;base64,'), '');
 
   String? get translateDistrict {
     if (toLowerCase() == 'Provincial_Wasit'.toLowerCase()) {

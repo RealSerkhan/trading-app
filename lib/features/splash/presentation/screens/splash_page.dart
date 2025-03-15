@@ -18,8 +18,7 @@ class SplashPage extends StatefulWidget {
   State<SplashPage> createState() => _SplashPageState();
 }
 
-class _SplashPageState extends State<SplashPage>
-    with ContextStateMixin<SplashPage>, StateMixin {
+class _SplashPageState extends State<SplashPage> with ContextStateMixin<SplashPage>, StateMixin {
   late UserCubit _userCubit;
   late AppSettingsBloc _appSettingsBloc;
 
@@ -39,8 +38,7 @@ class _SplashPageState extends State<SplashPage>
           bloc: _userCubit,
           listener: (context, state) {
             state.whenOrNull(
-              success: (user) =>
-                  context.replaceRoute(const BeneficirariesRoute()),
+              success: (user) => context.replaceRoute(const SymbolsRoute()),
             );
           },
         ),
@@ -50,8 +48,7 @@ class _SplashPageState extends State<SplashPage>
             if (state is AppSettingsSuccessState) {
               _userCubit.getUserData();
             } else if (state is AppSettingErrorState) {
-              showSnackbar(
-                  customMessage: context.localizations.something_went_wrong);
+              showSnackbar(customMessage: context.localizations.something_went_wrong);
             }
           },
         ),

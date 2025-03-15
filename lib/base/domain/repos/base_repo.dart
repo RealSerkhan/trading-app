@@ -6,5 +6,5 @@ typedef FutureEitherFailureOrData<T> = Future<Either<Failure, T>> Function();
 
 abstract class BaseRepository {
   Future<Either<Failure, T>> request<T>(Function data,
-      {Either<Failure, T>? Function(WrongDataException e)? exceptionHandler});
+      {required Function? toDomainHandler, Either<Failure, T>? Function(WrongDataException e)? exceptionHandler});
 }

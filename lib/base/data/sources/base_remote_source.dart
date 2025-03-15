@@ -13,7 +13,7 @@ import 'package:http_sdk/http_sdk.dart';
 /// Abstract base class for a remote data source, which is responsible for making HTTP requests
 /// to a server and handling the responses.
 abstract class BaseRemoteSource with Loggable {
-  const BaseRemoteSource(this._client,this.sdk);
+  const BaseRemoteSource(this._client, this.sdk);
 
   /// The base HTTP client used to make requests.
   final HttpClient _client;
@@ -22,9 +22,8 @@ abstract class BaseRemoteSource with Loggable {
   final HttpSdk sdk;
 
   /// Makes an SDK request and returns the result as a [Result] object.
-  Future<Result<T>> sdkRequest<T>(Future<Response<T>> call) => call
-      .catchError((e) => throw DioHttpClient.getDioException(e))
-      ._mapToResult<T>();
+  Future<Result<T>> sdkRequest<T>(Future<Response<T>> call) =>
+      call.catchError((e) => throw DioHttpClient.getDioException(e))._mapToResult<T>();
 
   /// Makes an HTTP request to the specified endpoint with the specified method and parameters.
   ///
@@ -74,9 +73,7 @@ cancelToken: $cancelToken,
     );
 
     // add auth flag to headers if `withAuth` is true
-    final Options options = Options(
-        headers: headers,
-        extra: (!withAuth ? TokenType.None : tokenType).asExtra);
+    final Options options = Options(headers: headers, extra: (!withAuth ? TokenType.None : tokenType).asExtra);
 
     switch (method) {
       case HttpMethod.GET:
@@ -151,14 +148,11 @@ extension ResponseExtensions on Future<Response<dynamic>> {
   ///
   /// The following parameters are available:
   /// [serializer] : A function that takes the JSON response data and returns an object of type `R`.
-  Future<Result<R>> _processCall<R>({R Function(dynamic json)? serializer}) =>
-      then((it) {
+  Future<Result<R>> _processCall<R>({R Function(dynamic json)? serializer}) => then((it) {
         if (it.isSuccess) {
-          return Result<R>.data(ResultOrigin.network,
-              serializer?.call(jsonDecode(it.data)) ?? it.data! as R);
+          return Result<R>.data(ResultOrigin.network, serializer?.call(jsonDecode(it.data)) ?? it.data! as R);
         }
-        return Result<R>.error(ResultOrigin.network,
-            NetworkException.handleResponseException(it.statusCode, it.data));
+        return Result<R>.error(ResultOrigin.network, NetworkException.handleResponseException(it.statusCode, it.data));
       }).catchError((it, st) {
         Logger.e('Remote Source RESPONSE: e: $it\nst: $st');
         return Result<R>.error(ResultOrigin.network, it, st);
@@ -166,24 +160,22 @@ extension ResponseExtensions on Future<Response<dynamic>> {
 
   Future<Result<R>> _mapToResult<R>() => _processCall<R>();
 
-  Future<R> mapToResult<R>(R Function(dynamic json) serializer,
-          String loggerTag, String callID, SerializerType serializerType) =>
+  Future<R> mapToResult<R>(
+          R Function(dynamic json) serializer, String loggerTag, String callID, SerializerType serializerType) =>
       then((it) async {
-        final BaseResponse responseData = BaseResponse.fromJson(it.data);
-        if (it.statusCode == 200 || responseData.success.isNotNullOrFalse) {
+        if (it.statusCode == 200) {
           if (serializerType == SerializerType.Single) {
-            return (serializer.call(responseData.data));
+            return (serializer.call(it.data));
           } else if (serializerType == SerializerType.List) {
-            return listSerializer(responseData, serializer) as R;
+            return listSerializer(it.data, serializer) as R;
           } else {
-            return (serializer.call(responseData.data));
+            return (serializer.call(it.data));
           }
         } else {
           throw WrongDataException(
-            errorData: responseData.data,
+            errorData: it.data,
             sourceClass: loggerTag,
             callId: callID,
-            cause: responseData.message,
             response: it,
             statusCode: it.statusCode,
           );
@@ -196,8 +188,7 @@ extension ResponseExtensions on Future<Response<dynamic>> {
               callId: callID,
             );
           }
-          final BaseResponse responseData =
-              BaseResponse.fromJson(error.response!.data ?? {});
+          final BaseResponse responseData = BaseResponse.fromJson(error.response!.data ?? {});
           throw WrongDataException(
             errorData: responseData.data,
             sourceClass: loggerTag,
@@ -217,9 +208,6 @@ extension ResponseExtensions on Future<Response<dynamic>> {
         }
       });
 
-  List<dynamic> listSerializer(
-          BaseResponse responseData, Function(dynamic json) serializer) =>
-      List.from((responseData.data as List)
-          .map((child) => (serializer.call(responseData.data)))
-          .toList());
+  List<dynamic> listSerializer(BaseResponse responseData, Function(dynamic json) serializer) =>
+      List.from((responseData.data as List).map((child) => (serializer.call(responseData.data))).toList());
 }
