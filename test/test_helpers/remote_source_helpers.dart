@@ -1,9 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
-
 
 import 'package:beneficiary/base/data/sources/base_remote_source.dart';
 import 'package:beneficiary/base/networking/dio_http_client.dart';
-import 'package:dart_kit/dart_kit.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart' as test;
 import 'package:http_mock_adapter/http_mock_adapter.dart';
@@ -15,7 +14,7 @@ final anyEndPoint = RegExp(r'(\w+)');
 
 class FakeHttpSdk extends test.Fake implements HttpSdk {}
 
-String readFixture(String path) => File(path).readAsStringSync();
+Object readFixture(String path) => jsonDecode(File(path).readAsStringSync());
 
 HttpClient createMockedHttpClient<T>(void Function(DioAdapter) mocker) {
   final dio = Dio();
@@ -31,8 +30,8 @@ HttpClient createMockedHttpClient<T>(void Function(DioAdapter) mocker) {
 void testRemoteSourceApi<T extends BaseRemoteSource, R>(
   String description, {
   required T Function(HttpClient client, HttpSdk sdk) build,
-  required Future<Result<R>> Function(T source) act,
-  required bool Function(Result<R> response) expect,
+  required Future<R> Function(T source) act,
+  required bool Function(R response) expect,
   required String fixture,
   int statusCode = 200,
   dynamic tags,
@@ -43,16 +42,11 @@ void testRemoteSourceApi<T extends BaseRemoteSource, R>(
       // Arrange
       final mockedHttpClient = createMockedHttpClient((mocker) {
         mocker
-          ..onGet(anyEndPoint,
-              (server) => server.reply(statusCode, readFixture(fixture)))
-          ..onPost(anyEndPoint,
-              (server) => server.reply(statusCode, readFixture(fixture)))
-          ..onDelete(anyEndPoint,
-              (server) => server.reply(statusCode, readFixture(fixture)))
-          ..onPatch(anyEndPoint,
-              (server) => server.reply(statusCode, readFixture(fixture)))
-          ..onPut(anyEndPoint,
-              (server) => server.reply(statusCode, readFixture(fixture)));
+          ..onGet(anyEndPoint, (server) => server.reply(statusCode, readFixture(fixture)))
+          ..onPost(anyEndPoint, (server) => server.reply(statusCode, readFixture(fixture)))
+          ..onDelete(anyEndPoint, (server) => server.reply(statusCode, readFixture(fixture)))
+          ..onPatch(anyEndPoint, (server) => server.reply(statusCode, readFixture(fixture)))
+          ..onPut(anyEndPoint, (server) => server.reply(statusCode, readFixture(fixture)));
       });
 
       final source = build(mockedHttpClient, FakeHttpSdk());
@@ -61,8 +55,7 @@ void testRemoteSourceApi<T extends BaseRemoteSource, R>(
       final response = await act(source);
 
       // assert
-      test.expect(
-          response, test.predicate((Result<R> response) => expect(response)));
+      test.expect(response, test.predicate((R response) => expect(response)));
     },
     tags: tags,
   );

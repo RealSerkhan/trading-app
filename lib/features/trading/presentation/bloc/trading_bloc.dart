@@ -1,4 +1,3 @@
-import 'package:beneficiary/base/domain/models/no_params.dart';
 import 'package:beneficiary/features/trading/domain/entities/trading_instrument.dart';
 import 'package:beneficiary/features/trading/domain/use_cases/get_symbols_use_case.dart';
 import 'package:beneficiary/features/trading/domain/use_cases/listen_price_updates_use_case.dart';
@@ -30,13 +29,15 @@ class TradingBloc extends Bloc<TradingEvent, TradingState> {
 
     final result = await getSymbolsUseCase('oanda');
     result.fold((failure) => emit(TradingError(failure)), (instruments) {
-      _allSymbols.addAll(instruments);
-      emit(TradingLoaded(instruments));
+      final limitedCountInstruments = instruments.getRange(0, 50).toList();
+      _allSymbols.addAll(limitedCountInstruments);
+      emit(TradingLoaded(limitedCountInstruments));
+      add(StartPriceUpdatesEvent(limitedCountInstruments));
     });
   }
 
   void _startPriceUpdates(StartPriceUpdatesEvent event, Emitter<TradingState> emit) {
-    listenPriceUpdates.createObservable(NoParams()).listen((instrument) {
+    listenPriceUpdates.createObservable(event.tradingInstruments).listen((instrument) {
       add(PriceUpdatedEvent(instrument));
     });
   }

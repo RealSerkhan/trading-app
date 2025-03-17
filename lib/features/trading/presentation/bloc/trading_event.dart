@@ -8,7 +8,10 @@ abstract class TradingEvent extends Equatable {
 
 class FetchOandaSymbolsEvent extends TradingEvent {}
 
-class StartPriceUpdatesEvent extends TradingEvent {}
+class StartPriceUpdatesEvent extends TradingEvent {
+  final List<TradingInstrument> tradingInstruments;
+  StartPriceUpdatesEvent(this.tradingInstruments);
+}
 
 class PriceUpdatedEvent extends TradingEvent {
   final TradingInstrument instrument;

@@ -4,6 +4,6 @@ import 'package:dartz/dartz.dart';
 import '../../../../base/domain/errors/failure.dart';
 
 abstract class TradingRepository {
-  Stream<TradingInstrument> listenPriceUpdates();
+    Stream<TradingInstrument> listenPriceUpdates(List<TradingInstrument>tradingInstruments);
   Future<Either<Failure, List<TradingInstrument>>> getSymbols({required String symbolName});
 }

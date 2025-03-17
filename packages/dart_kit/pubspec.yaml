@@ -8,7 +8,7 @@ environment:
   sdk: '>=2.18.2 <3.0.0'
 
 dependencies:
-  logger: 1.1.0
+  logger: ^2.5.0
   meta: 1.15.0
   rxdart: 0.27.7
 

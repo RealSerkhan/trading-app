@@ -30,7 +30,9 @@ class TradingRepoImpl extends BaseRepositoryImpl implements TradingRepository {
   }
 
   @override
-  Stream<TradingInstrument> listenPriceUpdates() {
+  Stream<TradingInstrument> listenPriceUpdates(List<TradingInstrument>tradingInstruments) {
+    webSocketService.init(tradingInstruments);
+
     webSocketService.connect();
     return webSocketService.stream;
   }

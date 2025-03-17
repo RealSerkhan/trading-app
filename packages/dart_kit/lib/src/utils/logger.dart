@@ -22,22 +22,22 @@ abstract class Logger {
   }
 
   static void v(dynamic message, [dynamic error, StackTrace? stackTrace]) =>
-      _instance.log(Level.verbose, message, error, stackTrace);
+      _instance.log(Level.trace, message, error: error, stackTrace: stackTrace);
 
   static void d(dynamic message, [dynamic error, StackTrace? stackTrace]) =>
-      _instance.log(Level.debug, message, error, stackTrace);
+      _instance.log(Level.debug, message, error: error, stackTrace: stackTrace);
 
   static void i(dynamic message, [dynamic error, StackTrace? stackTrace]) =>
-      _instance.log(Level.info, message, error, stackTrace);
+      _instance.log(Level.info, message, error: error, stackTrace: stackTrace);
 
   static void w(dynamic message, [dynamic error, StackTrace? stackTrace]) =>
-      _instance.log(Level.warning, message, error, stackTrace);
+      _instance.log(Level.warning, message, error: error, stackTrace: stackTrace);
 
   static void e(dynamic message, [dynamic error, StackTrace? stackTrace]) =>
-      _instance.log(Level.error, message, error, stackTrace);
+      _instance.log(Level.error, message, error: error, stackTrace: stackTrace);
 
   static void wtf(dynamic message, [dynamic error, StackTrace? stackTrace]) =>
-      _instance.log(Level.wtf, message, error, stackTrace);
+      _instance.log(Level.fatal, message, error: error, stackTrace: stackTrace);
 
   static Future<void> fatal({dynamic error, StackTrace? stackTrace}) async {
     d('Fatal', error, stackTrace);
@@ -52,27 +52,49 @@ class _CrashReportWrappedPrinter extends LogPrinter {
   final CrashReportTool _crashReportTool;
 
   @override
-  void init() => _printer.init();
+  Future<void> init() async {
+    await _printer.init();
+    return super.init();
+  }
+
+  @override
+  Future<void> destroy() async {
+    await _printer.destroy();
+    return super.destroy();
+  }
 
   @override
   List<String> log(LogEvent event) {
     late final dart_log.LogEvent sanitizedEvent = dart_log.LogEvent(
       event.level,
       event.message,
-      event.error,
-      event.stackTrace ?? _currentStacktrace(),
+      error: event.error,
+      stackTrace: event.stackTrace ?? _currentStacktrace(),
     );
 
     switch (event.level) {
-      case Level.verbose:
+      case Level.trace:
       case Level.debug:
-      case Level.nothing:
+      case Level.off:
       case Level.info:
         break;
       case Level.warning:
       case Level.error:
-      case Level.wtf:
+      case Level.fatal:
         _crashReportTool.logNonFatal(sanitizedEvent);
+        break;
+      case Level.all:
+        // TODO: Handle this case.
+        break;
+
+      case Level.verbose:
+        // TODO: Handle this case.
+        break;
+      case Level.wtf:
+        // TODO: Handle this case.
+        break;
+      case Level.nothing:
+        // TODO: Handle this case.
         break;
     }
     return _printer.log(sanitizedEvent);
@@ -91,9 +113,6 @@ class _CrashReportWrappedPrinter extends LogPrinter {
     );
     return PrintableTrace(newFrames);
   }
-
-  @override
-  void destroy() => _printer.destroy();
 }
 
 class _DisplayAllLogFilter extends LogFilter {

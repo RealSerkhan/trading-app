@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:beneficiary/base/presentation/widgets/text_field.dart';
 import 'package:beneficiary/features/trading/domain/entities/trading_instrument.dart';
 import 'package:beneficiary/features/trading/presentation/bloc/trading_bloc.dart';
 import 'package:beneficiary/features/trading/presentation/bloc/trading_event.dart';
@@ -23,8 +24,6 @@ class _SymbolsPageState extends State<SymbolsPage> {
     super.initState();
     // Initially fetch OANDA symbols.
     context.read<TradingBloc>().add(FetchOandaSymbolsEvent());
-    // Start streaming price updates.
-    context.read<TradingBloc>().add(StartPriceUpdatesEvent());
   }
 
   @override
@@ -37,18 +36,15 @@ class _SymbolsPageState extends State<SymbolsPage> {
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: TextField(
+            child: CustomTextField(
               controller: _searchController,
-              decoration: InputDecoration(
-                labelText: 'Search Instruments',
-                border: const OutlineInputBorder(),
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.search),
-                  onPressed: () {
-                    final query = _searchController.text.trim();
-                    context.read<TradingBloc>().add(SearchSymbolsEvent(query));
-                  },
-                ),
+              title: 'Search Instruments',
+              suffix: IconButton(
+                icon: const Icon(Icons.search),
+                onPressed: () {
+                  final query = _searchController.text.trim();
+                  context.read<TradingBloc>().add(SearchSymbolsEvent(query));
+                },
               ),
               onChanged: (value) {
                 // Optionally search as user types.

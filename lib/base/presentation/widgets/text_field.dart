@@ -101,18 +101,13 @@ class _CustomTextFieldState extends State<CustomTextField> {
       mainAxisSize: MainAxisSize.min,
       children: [
         if (widget.title != null) ...[
-          Text(widget.title!,
-              style:
-                  appThemeData.typography.body1.copyWith(height: 20.h / 12.w)),
-          SizedBox(height: 9.h)
+          Text(widget.title!, style: appThemeData.typography.body2.copyWith(height: 20.h / 12.w)),
+          SizedBox(height: 6.h)
         ],
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (widget.customPrefix != null) ...[
-              widget.customPrefix!,
-              12.width
-            ],
+            if (widget.customPrefix != null) ...[widget.customPrefix!, 12.width],
             Expanded(
               child: TextFormField(
                 focusNode: widget.focusNode,
@@ -122,8 +117,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 obscureText: isVisible,
                 style: widget.style ??
                     appThemeData.typography.body2.copyWith(
-                      color: widget.textColor ??
-                          appThemeData.colors.textSubmarineGrey,
+                      color: widget.textColor ?? appThemeData.colors.textSubmarineGrey,
                     ),
                 enabled: widget.enabled ?? true,
                 controller: widget.controller,
@@ -163,8 +157,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                           minWidth: 16,
                           minHeight: 16,
                         ),
-                  suffixIcon: widget.obsecureText &&
-                          TextInputType.visiblePassword == widget.keyBoardType
+                  suffixIcon: widget.obsecureText && TextInputType.visiblePassword == widget.keyBoardType
                       ? IconButton(
                           onPressed: () {
                             isVisible = !isVisible;
@@ -174,88 +167,69 @@ class _CustomTextFieldState extends State<CustomTextField> {
                           icon: isVisible
                               ? SvgPicture.asset(
                                   Resources.vectors.eyeOff,
-                                  color: appThemeData.colors.textBlackKnight
-                                      .withOpacity(0.5),
+                                  color: appThemeData.colors.textBlackKnight.withOpacity(0.5),
                                   height: 20.h,
                                 )
                               : SvgPicture.asset(
                                   Resources.vectors.eyeOn,
                                   height: 20.h,
-                                  color: appThemeData.colors.textBlackKnight
-                                      .withOpacity(0.5),
+                                  color: appThemeData.colors.textBlackKnight.withOpacity(0.5),
                                 ))
                       : widget.suffix,
                   filled: true,
                   hintText: widget.hint ?? '',
-                  hintStyle: widget.hintStyle ??
-                      appThemeData.typography.body2
-                          .copyWith(color: appThemeData.colors.grey),
+                  hintStyle:
+                      widget.hintStyle ?? appThemeData.typography.body2.copyWith(color: appThemeData.colors.grey),
                   errorStyle: widget.hintStyle ??
-                      appThemeData.typography.body2.copyWith(
-                          color: Colors.red,
-                          fontSize: 10.w,
-                          height: 12.h / 10.w),
-                  fillColor:
-                      widget.fillColor ?? context.colors.secondaryBluishWhite,
-                  contentPadding: widget.contentPadding ??
-                      EdgeInsets.symmetric(vertical: 20.h),
+                      appThemeData.typography.body2.copyWith(color: Colors.red, fontSize: 10.w, height: 12.h / 10.w),
+                  fillColor: widget.fillColor ?? context.colors.secondaryBluishWhite,
+                  contentPadding: widget.contentPadding ?? EdgeInsets.symmetric(vertical: 20.h),
                   errorBorder: OutlineInputBorder(
-                    borderRadius:
-                        widget.borderRadius ?? BorderRadius.circular(12),
+                    borderRadius: widget.borderRadius ?? BorderRadius.circular(12),
                     borderSide: const BorderSide(
                       color: Colors.redAccent,
                     ),
                   ),
                   disabledBorder: OutlineInputBorder(
-                    borderRadius:
-                        widget.borderRadius ?? BorderRadius.circular(12),
+                    borderRadius: widget.borderRadius ?? BorderRadius.circular(12),
                     borderSide: BorderSide(
                       color: appThemeData.colors.borderColor,
                       width: 1,
                     ),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderRadius:
-                        widget.borderRadius ?? BorderRadius.circular(12),
+                    borderRadius: widget.borderRadius ?? BorderRadius.circular(12),
                     borderSide: !widget.hasBorder!
                         ? BorderSide.none
                         : BorderSide(
-                            color: widget.borderColor ??
-                                appThemeData.colors.textBlackKnight
-                                    .withOpacity(0.1),
+                            color: widget.borderColor ?? appThemeData.colors.textBlackKnight.withOpacity(0.1),
                             width: 0.5,
                           ),
                   ),
                   border: OutlineInputBorder(
-                    borderRadius:
-                        widget.borderRadius ?? BorderRadius.circular(12),
+                    borderRadius: widget.borderRadius ?? BorderRadius.circular(12),
                     borderSide: !widget.hasBorder!
                         ? BorderSide.none
                         : BorderSide(
-                            color: widget.borderColor ??
-                                appThemeData.colors.borderColor,
+                            color: widget.borderColor ?? appThemeData.colors.borderColor,
                             width: 1,
                           ),
                   ),
                   focusedErrorBorder: OutlineInputBorder(
-                    borderRadius:
-                        widget.borderRadius ?? BorderRadius.circular(12),
+                    borderRadius: widget.borderRadius ?? BorderRadius.circular(12),
                     borderSide: !widget.hasBorder!
                         ? BorderSide.none
                         : BorderSide(
-                            color: widget.borderColor ??
-                                appThemeData.colors.primaryColor,
+                            color: widget.borderColor ?? appThemeData.colors.primaryColor,
                             width: 1,
                           ),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderRadius:
-                        widget.borderRadius ?? BorderRadius.circular(12),
+                    borderRadius: widget.borderRadius ?? BorderRadius.circular(12),
                     borderSide: !widget.hasBorder!
                         ? BorderSide.none
                         : BorderSide(
-                            color: widget.borderColor ??
-                                appThemeData.colors.borderColor,
+                            color: widget.borderColor ?? appThemeData.colors.borderColor,
                             width: 1,
                           ),
                   ),
